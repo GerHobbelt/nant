@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 
@@ -30,7 +31,14 @@ namespace NAnt.Core.Util
         /// </returns>
         public static IEnumerable<DirectoryInfo> EnumerateDirectories( this DirectoryInfo target, string searchPattern )
         {
+            const int MAX_PATH = 248;
+            const int MAX_FILENAME = 260;
+
             string searchPath = Path.Combine( target.FullName, searchPattern );
+
+            if (searchPath.Length >= MAX_PATH)
+                yield break;
+
             NativeWin32.WIN32_FIND_DATA findData;
             using (NativeWin32.SafeSearchHandle hFindFile = NativeWin32.FindFirstFile( searchPath, out findData ))
             {
@@ -40,7 +48,12 @@ namespace NAnt.Core.Util
                     {
                         if ((findData.dwFileAttributes & FileAttributes.Directory) != 0 && findData.cFileName != "." && findData.cFileName != "..")
                         {
-                            yield return new DirectoryInfo( Path.Combine( target.FullName, findData.cFileName ) );
+                            string fileName = Path.Combine(target.FullName, findData.cFileName);
+
+                            if (fileName.Length >= MAX_FILENAME)
+                                yield break;
+                            else
+                                yield return new DirectoryInfo( Path.Combine( target.FullName, findData.cFileName ) );
                         }
                     } while (NativeWin32.FindNextFile( hFindFile, out findData ));
                 }
@@ -66,7 +79,14 @@ namespace NAnt.Core.Util
         /// </returns>
         public static IEnumerable<FileInfo> EnumerateFiles( this DirectoryInfo target, string searchPattern )
         {
+            const int MAX_PATH = 248;
+            const int MAX_FILENAME = 260;
+            
             string searchPath = Path.Combine( target.FullName, searchPattern );
+
+            if (searchPath.Length >= MAX_PATH)
+                yield break;
+
             NativeWin32.WIN32_FIND_DATA findData;
             using (NativeWin32.SafeSearchHandle hFindFile = NativeWin32.FindFirstFile( searchPath, out findData ))
             {
@@ -76,7 +96,11 @@ namespace NAnt.Core.Util
                     {
                         if ((findData.dwFileAttributes & FileAttributes.Directory) == 0 && findData.cFileName != "." && findData.cFileName != "..")
                         {
-                            yield return new FileInfo( Path.Combine( target.FullName, findData.cFileName ) );
+                            string fileName = Path.Combine(target.FullName, findData.cFileName);
+                            if (fileName.Length >= MAX_FILENAME)
+                                yield break;
+                            else
+                                yield return new FileInfo( Path.Combine( target.FullName, findData.cFileName ) );
                         }
                     } while (NativeWin32.FindNextFile( hFindFile, out findData ));
                 }

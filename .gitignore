@@ -58,3 +58,4 @@ test-results/
 *.rej
 *.swp
 /Build NANT.bat
+/.vs
