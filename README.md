@@ -60,7 +60,7 @@ Windows
   You will need the .NET Framework SDK as well as the runtime 
   components if you intend to compile programs.
 
-  Note: NAnt currently supports versions 1.0, 1.1, 2.0, 3.5, and 4.0 
+  Note: NAnt currently supports versions 1.0, 1.1, 2.0, 3.5, 4.0,  and 4.6.1 
   of the Microsoft .NET Framework. 
 
 or
