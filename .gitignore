@@ -57,3 +57,5 @@ test-results/
 *.orig
 *.rej
 *.swp
+/Build NANT.bat
+/.vs
